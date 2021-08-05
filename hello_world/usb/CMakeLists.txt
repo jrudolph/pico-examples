@@ -2,9 +2,13 @@ if (TARGET tinyusb_device)
     add_executable(hello_usb
             hello_usb.c
             )
+    
+    pico_generate_pio_header(hello_usb ${CMAKE_CURRENT_LIST_DIR}/ps2.pio)
+    pico_generate_pio_header(hello_usb ${CMAKE_CURRENT_LIST_DIR}/clocked_input.pio)
 
+    #pico_set_binary_type(TARGET_NAME no_flash)
     # Pull in our pico_stdlib which aggregates commonly used features
-    target_link_libraries(hello_usb pico_stdlib)
+    target_link_libraries(hello_usb pico_stdlib hardware_pio hardware_i2c hardware_spi)
 
     # enable usb output, disable uart output
     pico_enable_stdio_usb(hello_usb 1)
