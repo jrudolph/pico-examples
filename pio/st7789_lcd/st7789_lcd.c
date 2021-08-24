@@ -20,12 +20,12 @@
 #define IMAGE_SIZE 256
 #define LOG_IMAGE_SIZE 8
 
-#define PIN_DIN 0
-#define PIN_CLK 1
-#define PIN_CS 2
-#define PIN_DC 3
-#define PIN_RESET 4
-#define PIN_BL 5
+#define PIN_DIN 15
+#define PIN_CLK 14
+#define PIN_CS 17
+#define PIN_DC 12
+#define PIN_RESET 11 // FIXME
+#define PIN_BL 10 // FIXME
 
 #define SERIAL_CLK_DIV 1.f
 
@@ -81,12 +81,6 @@ static inline void st7789_start_pixels(PIO pio, uint sm) {
 
 int main() {
     stdio_init_all();
-
-    PIO pio = pio0;
-    uint sm = 0;
-    uint offset = pio_add_program(pio, &st7789_lcd_program);
-    st7789_lcd_program_init(pio, sm, offset, PIN_DIN, PIN_CLK, SERIAL_CLK_DIV);
-
     gpio_init(PIN_CS);
     gpio_init(PIN_DC);
     gpio_init(PIN_RESET);
@@ -96,7 +90,22 @@ int main() {
     gpio_set_dir(PIN_RESET, GPIO_OUT);
     gpio_set_dir(PIN_BL, GPIO_OUT);
 
+    /* gpio_put(PIN_CS, 1);
+    sleep_ms(100);
+    gpio_put(PIN_CS, 0);
+    sleep_ms(100);
     gpio_put(PIN_CS, 1);
+    sleep_ms(100);
+    gpio_put(PIN_CS, 0);
+    sleep_ms(100); */
+
+    PIO pio = pio0;
+    uint sm = 0;
+    uint offset = pio_add_program(pio, &st7789_lcd_program);
+    st7789_lcd_program_init(pio, sm, offset, PIN_DIN, PIN_CLK, SERIAL_CLK_DIV);
+
+    gpio_put(PIN_CS, 1);
+
     gpio_put(PIN_RESET, 1);
     lcd_init(pio, sm, st7789_init_seq);
     gpio_put(PIN_BL, 1);
